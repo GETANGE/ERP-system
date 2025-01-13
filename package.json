@@ -1,0 +1,21 @@
+{
+  "name": "my-erp",
+  "version": "1.0.0",
+  "author": "getange",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "start": "concurrently \"bun workspace backend start\" \"bun workspace frontend dev\""
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "concurrently": "^9.1.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
