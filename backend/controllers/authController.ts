@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import client from "../middlwares/database";
 import sendMail from "../utils/email";
 import { genarateResetToken } from "../utils/resetToken";
+import AppError from "../utils/AppError";
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -18,11 +19,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
         const result = await client.query(query);
 
         if (result.rows.length > 0) {
-            return next (
-                res.status(400).json({
-                    status: "User already exists"
-                })
-            );
+            return next ( new AppError("This user already exists", 403))
         }
 
         // hash the password
@@ -45,11 +42,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
         });
     } catch (error:any) {
         console.error(`Error creating user: ${error}`);
-        return next (
-            res.status(500).json({
-            status: "Error",
-            message: "An error occurred while creating the user.",
-        }));
+        return next (new AppError("An error occurred while creating the user.", 500));
     }
 };
 
@@ -59,11 +52,7 @@ export const loginUser = async (req:Request, res:Response, next:NextFunction) =>
         const { email , password } = req.body;
 
         if(!email || !password) {
-            return next(
-                res.status(403).json({
-                    message: "Missing email or password."
-                })
-            )
+            return next(new AppError("Missing email or password.", 403))
         } 
 
         // check if the email exists in the database
@@ -76,22 +65,14 @@ export const loginUser = async (req:Request, res:Response, next:NextFunction) =>
         const result = await client.query(query);
 
         if(!result) {
-            return next(
-                res.status(403).json({
-                    message: "This user does not exists"
-                })
-            )
+            return next( new AppError("This user does not exists", 403))
         }
 
         //check if passwords match
         const isMatch = await Bun.password.verify(password, result.rows[0].password);
 
         if(!isMatch){
-            return next(
-                res.status(403).json({
-                    message:"Invalid username or password"
-                })
-            )
+            return next( new AppError("Invalid username or password", 403))
         }
 
         // assign a token
@@ -103,13 +84,8 @@ export const loginUser = async (req:Request, res:Response, next:NextFunction) =>
             data: result.rows[0]
         })
     } catch (error) {
-        console.log( `Error logging in user: ${error}`);
-        return next(
-            res.status(500).json({
-                status: "Error",
-                message: "An error occured while logging in user."
-            })
-        )
+        console.log(`Error logging in user: ${error}`);
+        return next(new AppError("An error occured while logging in user.", 500))
     }
 }
 
@@ -119,12 +95,7 @@ export const protect = async (req: any, res: Response, next: NextFunction) => {
         const authHeader = req.headers.authorization;
 
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
-            return next(
-                res.status(401).json({
-                    status: "fail",
-                    message: "You are not logged In (Authorizations).",
-                })
-            );
+            return next( new AppError("You are not logged In (Authorizations).", 403))
         }
 
         const token = authHeader.split(" ")[1];
@@ -132,12 +103,7 @@ export const protect = async (req: any, res: Response, next: NextFunction) => {
         const userId = decodedToken.id;
 
         if (!userId) {
-            return next(
-                res.status(403).json({
-                    status: "fail",
-                    message: "Invalid token.",
-                })
-            );
+            return next( new AppError("Invalid token.", 403))
         }
 
         const query = {
@@ -149,12 +115,7 @@ export const protect = async (req: any, res: Response, next: NextFunction) => {
         const result = await client.query(query);
 
         if (result.rows.length === 0) {
-            return next(
-                res.status(404).json({
-                    status: "Error",
-                    message: "User not found.",
-                })
-            );
+            return next( new AppError("User not found.", 404))
         }
 
         req.user = result.rows[0];
@@ -162,15 +123,9 @@ export const protect = async (req: any, res: Response, next: NextFunction) => {
     } catch (error: any) {
         console.error(`Protect Middleware Error: ${error.message}`);
         if (error.name === "JsonWebTokenError") {
-            res.status(403).json({
-                status: "fail",
-                message: "Invalid or expired token.",
-            });
+            return next(new AppError("Invalid or expired token.", 401));
         } else {
-            res.status(500).json({
-                status: "Error",
-                message: "An error occurred while protecting this route.",
-            });
+            return next (new AppError("An error occurred while protecting this route.", 500));
         }
     }
 };
@@ -179,12 +134,7 @@ export const protect = async (req: any, res: Response, next: NextFunction) => {
 export const restrictTo = (...role:string[])=>{
     return(req:any, res:Response, next:NextFunction)=>{
         if(!role.includes(req.user.role)){
-            return next(
-                res.status(403).json({
-                    status:"fail",
-                    message: "Not authorized to perform this action"
-                })
-            )
+            return next(new AppError("Not authorized to perform this action",403))
         }
         next();
     }
@@ -198,12 +148,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
         const { email } = req.body;
 
         if (!email) {
-            return next (
-                res.status(400).json({
-                    status: "fail",
-                    message: "Email is required",
-                })
-            );
+            return next (new AppError("Email is required", 400))
         }
 
         // Check if the user exists
@@ -216,12 +161,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
         const result = await client.query(query);
 
         if (!result.rows || result.rows.length === 0) {
-            return next (
-                res.status(404).json({
-                    status: "fail",
-                    message: "User not found",
-                })
-            );
+            return next (new AppError("User not found", 404))
         }
 
         const user = result.rows[0];
@@ -233,7 +173,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
         const content = {
             heading: "Password Reset Request",
             body: `
-                <p>Dear ${user.userName},</p>
+                <p>Dear ${user.username},</p>
                 <p>You requested a password reset. Use the token below to reset your password:</p>
                 <p><strong>${resetToken}</strong></p>
                 <p>This token is valid for 10 minutes.</p>
@@ -267,20 +207,10 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
             });
         } catch (emailError) {
             console.error(`Error trying to send email: ${emailError}`);
-            return next (
-                res.status(500).json({
-                    status: "error",
-                    message: "Error sending email",
-                })
-            );
+            return next(new AppError("Error sending email", 500))
         }
     } catch (error) {
         console.error("Error in forgotPassword:", error);
-        return next(
-            res.status(500).json({
-                status: "error",
-                message: "Something went wrong. Please try again later.",
-            })
-        );
+        return next(new AppError("Something went wrong. Please try again later.", 500))
     }
 };

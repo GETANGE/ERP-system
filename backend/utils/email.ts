@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config()
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESED_API_KEY);
 
 const sendMail = async ( from: string, subject:string, to:string, content:{
     heading:string,

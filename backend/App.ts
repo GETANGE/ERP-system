@@ -1,4 +1,4 @@
-import express,{ type Request, type Response} from "express";
+import express,{ type NextFunction, type Request, type Response} from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import cors from "cors";
@@ -8,6 +8,7 @@ const app = express();
 const port = 4004;
 
 import userRoute from "./routes/userRoute";
+import AppError from "./utils/AppError";
 
 app.use(morgan('dev'));
 
@@ -29,6 +30,26 @@ app.get("/", (req:Request,res:Response)=>{
     })
 })
 
+// handling unhandled routes
+app.use("*", (req:Request, res:Response, next:NextFunction)=>{
+    return next( new AppError(`This route ${req.originalUrl} is not yet handled...`, 401))
+})
+
+// Global error handling
+interface CustomeError{
+    statusCode: number,
+    status: string,
+    message: string
+}
+app.use((err:CustomeError, req:Request, res:Response, next:NextFunction)=>{
+    let statusCode = err.statusCode || 500;
+    let status = err.status || 'Error';
+
+    res.status(statusCode).json({
+        status: status,
+        message: err.message
+    })
+})
 async function startServer(){
     await databaseConnect();
 
