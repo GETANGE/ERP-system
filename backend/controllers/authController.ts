@@ -6,7 +6,6 @@ import client from "../middlwares/database";
 import sendMail from "../utils/email";
 import { genarateResetToken } from "../utils/resetToken";
 import AppError from "../utils/AppError";
-import { password } from "bun";
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
