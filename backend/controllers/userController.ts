@@ -5,7 +5,6 @@ export const getAllUsers = async (req:Request, res:Response, next:NextFunction )
     try {
         // get all user from the database
         const query = {
-            name : 'fetch-users',
             text : ` SELECT * FROM users`
         }
 
@@ -23,7 +22,7 @@ export const getAllUsers = async (req:Request, res:Response, next:NextFunction )
         // get resppnse from the server
         res.status(200).json({
             status:"success",
-            data:result.rows[0]
+            data:result.rows
         })
     } catch (error) {
         return next(

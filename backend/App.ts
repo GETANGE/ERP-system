@@ -32,7 +32,7 @@ app.get("/", (req:Request,res:Response)=>{
 
 // handling unhandled routes
 app.use("*", (req:Request, res:Response, next:NextFunction)=>{
-    return next( new AppError(`This route ${req.originalUrl} is not yet handled...`, 401))
+    return next( new AppError(`This route ${req.originalUrl} is not yet defined...`, 401))
 })
 
 // Global error handling

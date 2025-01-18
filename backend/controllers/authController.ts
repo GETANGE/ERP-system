@@ -1,10 +1,12 @@
-import { type NextFunction, type Response, type Request, response, text } from "express";
+import { type NextFunction, type Response, type Request } from "express";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
 import client from "../middlwares/database";
 import sendMail from "../utils/email";
 import { genarateResetToken } from "../utils/resetToken";
 import AppError from "../utils/AppError";
+import { password } from "bun";
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -26,7 +28,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
         const hashedPassword = await Bun.password.hash(password)
 
         const insertQuery = {
-            text: `INSERT INTO users(userName, email, password, phoneNumber, role) VALUES($1, $2, $3, $4, $5) RETURNING *`,
+            text: `INSERT INTO users(username, email, password, phoneNumber, role) VALUES($1, $2, $3, $4, $5) RETURNING *`,
             values: [userName, email, hashedPassword, phoneNumber, role],
         };
 
@@ -58,7 +60,7 @@ export const loginUser = async (req:Request, res:Response, next:NextFunction) =>
         // check if the email exists in the database
         const query = {
             name: 'fetch-user',
-            text: 'SELECT userName, email FROM users WHERE email = $1',
+            text: 'SELECT * FROM users WHERE email = $1',
             values: [email],
         };
 
@@ -108,7 +110,7 @@ export const protect = async (req: any, res: Response, next: NextFunction) => {
 
         const query = {
             name: `fetch-user`,
-            text: `SELECT id, userName, email, role FROM users WHERE id = $1`,
+            text: `SELECT id, username, email, role FROM users WHERE id = $1`,
             values: [userId],
         };
 
@@ -154,7 +156,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
         // Check if the user exists
         const query = {
             name: "fetch-email",
-            text: `SELECT userName, email FROM users WHERE email = $1`,
+            text: `SELECT username, email FROM users WHERE email = $1`,
             values: [email],
         };
 
@@ -193,7 +195,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
             // Update the reset token in the database
             const updateQuery = {
                 text: `UPDATE users 
-                       SET passwordResetToken = $1, passwordExpiresAt = $2 
+                       SET passwordResetToken = $1, passwordResetExpiresAt = $2 
                        WHERE email = $3`,
                 values: [passwordResetToken, passwordExpiresAt, email],
             };
@@ -212,5 +214,138 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
     } catch (error) {
         console.error("Error in forgotPassword:", error);
         return next(new AppError("Something went wrong. Please try again later.", 500))
+    }
+};
+
+// Resetting password
+export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { resetToken, password } = req.body;
+
+        if (!resetToken || !password) {
+            return next(new AppError("Reset token and password are required", 400));
+        }
+
+        // Hash the reset token
+        const passToken = crypto.createHash("sha256").update(resetToken.toString()).digest("hex");
+
+        // Fetch the user with the reset token
+        const fetchUserQuery = {
+            text: `
+                SELECT username, email, passwordResetExpiresAt 
+                FROM users 
+                WHERE passwordResetToken = $1
+            `,
+            values: [passToken],
+        };
+
+        const fetchResult = await client.query(fetchUserQuery);
+
+        if (!fetchResult.rows || fetchResult.rows.length === 0) {
+            return next(new AppError("Token is invalid or does not exist", 401));
+        }
+
+        const user = fetchResult.rows[0];
+
+        // Check if the reset token has expired
+        const tokenExpiry = new Date(user.passwordResetExpiresAt);
+
+        if (tokenExpiry < new Date()) {
+            return next(new AppError("Reset token has expired", 401));
+        }
+
+        // Proceed to update the password
+        const updateQuery = {
+            text: `
+                UPDATE users 
+                SET passwordResetToken = NULL, 
+                    passwordResetExpiresAt = NULL, 
+                    password = $2
+                WHERE passwordResetToken = $1
+                RETURNING username, email;
+            `,
+            values: [passToken, await Bun.password.hash(password)],
+        };
+
+        const updateResult = await client.query(updateQuery);
+
+        // Respond to the client
+        const updatedUser = updateResult.rows[0];
+
+        // assign a jwt token
+        const token = jwt.sign({id: updatedUser.id }, process.env.JWT_SECRET!, { expiresIn: process.env.JWT_EXPIRES });
+
+        res.status(200).json({
+            status: "success",
+            token: token,
+            message: `Password updated successfully for user ${updatedUser.username}`,
+        });
+    } catch (error) {
+        console.error(`Error resetting password: ${error}`);
+        return next(new AppError("An error occurred while resetting the password", 500));
+    }
+};
+
+export const updatePassword = async (req: any, res: Response, next: NextFunction) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+
+        if (!currentPassword || !newPassword) {
+            return next(new AppError("Current and new passwords are required", 400));
+        }
+
+        const userId = req.user.id;
+
+        // Fetch the user data
+        const fetchUserQuery = {
+            name: 'fetch-user-data',
+            text: `
+                SELECT username, email, password 
+                FROM users 
+                WHERE id = $1
+            `,
+            values: [userId],
+        };
+
+        const userResult = await client.query(fetchUserQuery);
+
+        if (!userResult.rows || userResult.rows.length === 0) {
+            return next(new AppError("User not found", 403));
+        }
+
+        const user = userResult.rows[0];
+
+        // Verify the current password
+        const isMatch = await Bun.password.verify(currentPassword, user.password);
+
+        if (!isMatch) {
+            return next(new AppError("Your current password is incorrect", 403));
+        }
+
+        // Hash the new password
+        const hashedPassword = await Bun.password.hash(newPassword);
+
+        // Update the password
+        const updatePasswordQuery = {
+            text: `
+                UPDATE users 
+                SET password = $1 
+                WHERE id = $2
+                RETURNING username, email;
+            `,
+            values: [hashedPassword, userId],
+        };
+
+        const updateResult = await client.query(updatePasswordQuery);
+
+        // Respond with the updated user details
+        res.status(200).json({
+            status: 'success',
+            data: updateResult.rows[0],
+        });
+
+    } catch (error) {
+        console.error(`Error updating user password: ${error}`);
+        return next(new AppError("An error occurred while updating the password", 500));
     }
 };

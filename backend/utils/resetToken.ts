@@ -5,7 +5,7 @@ export const genarateResetToken = ()=>{
 
         const passwordResetToken = crypto.createHash('sha256').update(resetToken.toString()).digest('hex');
 
-        const passwordExpiresAt = Date.now()+ 10 * 60 * 1000
+        const passwordExpiresAt = new Date(Date.now()+ 10 * 60 * 1000).toISOString();
 
         return { resetToken, passwordExpiresAt, passwordResetToken }
 }
