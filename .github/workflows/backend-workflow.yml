@@ -3,7 +3,6 @@ name: backend-workflow
 on: [push, workflow_dispatch]
 
 jobs:
-
   setup:
     runs-on: ubuntu-latest
     steps:
@@ -13,12 +12,20 @@ jobs:
       - name: Install Bun
         run: |
           curl -fsSL https://bun.sh/install | bash
-          export BUN_INSTALL="$HOME/.bun"
-          export PATH="$BUN_INSTALL/bin:$PATH"
-          bun --version # Confirm installation
+          echo "BUN_INSTALL=$HOME/.bun" >> $GITHUB_ENV
+          echo "PATH=$HOME/.bun/bin:$PATH" >> $GITHUB_ENV
+
+      - name: Confirm Bun Installation
+        run: bun --version
+        env:
+          PATH: ${{ env.PATH }}
 
       - name: Install Dependencies
         run: bun install
+        env:
+          PATH: ${{ env.PATH }}
 
       - name: Run Tests
         run: bun test
+        env:
+          PATH: ${{ env.PATH }}
