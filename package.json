@@ -4,12 +4,8 @@
   "author": "getange",
   "license": "MIT",
   "private": true,
-  "workspaces": [
-    "backend",
-    "frontend"
-  ],
   "scripts": {
-    "start": "concurrently \"bun workspace backend start\" \"bun workspace frontend dev\""
+    "start": "concurrently \"bun run --cwd backend start\" \"bun run --cwd frontend dev\""
   },
   "devDependencies": {
     "@types/bun": "latest",
