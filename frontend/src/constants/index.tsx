@@ -16,42 +16,43 @@ export const navItems = [
 
 export const testimonials = [
   {
-    user: "John Doe",
-    company: "Stellar Solutions",
+    user: "Alice Wanjiku",
+    company: "Juja Mart Supplies",
     image: user1,
-    text: "I am extremely satisfied with the services provided. The team was responsive, professional, and delivered results beyond my expectations.",
+    text: "Bizedge ERP has completely transformed the way we manage our inventory and sales. The automation and reporting tools have saved us countless hours and improved our decision-making.",
   },
   {
-    user: "Jane Smith",
-    company: "Blue Horizon Technologies",
+    user: "Mark Otieno",
+    company: "Nairobi Tech Solutions",
     image: user2,
-    text: "I couldn't be happier with the outcome of our project. The team's creativity and problem-solving skills were instrumental in bringing our vision to life",
+    text: "Implementing Bizedge was the best decision for our growing business. The user-friendly interface and robust features make daily operations seamless and efficient.",
   },
   {
-    user: "David Johnson",
-    company: "Quantum Innovations",
+    user: "Grace Mwangi",
+    company: "Kisumu Agro Dealers",
     image: user3,
-    text: "Working with this company was a pleasure. Their attention to detail and commitment to excellence are commendable. I would highly recommend them to anyone looking for top-notch service.",
+    text: "With Bizedge, we now have complete visibility over our supply chain. The analytics dashboard has been invaluable in tracking performance and identifying areas of improvement.",
   },
   {
-    user: "Ronee Brown",
-    company: "Fusion Dynamics",
+    user: "Peter Kamau",
+    company: "Mombasa Textiles",
     image: user4,
-    text: "Working with the team at XYZ Company was a game-changer for our project. Their attention to detail and innovative solutions helped us achieve our goals faster than we thought possible. We are grateful for their expertise and professionalism!",
+    text: "The support team at Bizedge is incredible! They guided us through the implementation process, ensuring minimal downtime. We’ve seen tremendous improvements in productivity since day one.",
   },
   {
-    user: "Michael Wilson",
-    company: "Visionary Creations",
+    user: "Lucy Nyawira",
+    company: "Eldoret Fresh Produce",
     image: user5,
-    text: "I am amazed by the level of professionalism and dedication shown by the team. They were able to exceed our expectations and deliver outstanding results.",
+    text: "Bizedge ERP has streamlined our financial tracking and made compliance effortless. The integration features have also allowed us to connect with other tools we rely on daily.",
   },
   {
-    user: "Emily Davis",
-    company: "Synergy Systems",
+    user: "Daniel Njuguna",
+    company: "Thika Home Essentials",
     image: user6,
-    text: "The team went above and beyond to ensure our project was a success. Their expertise and dedication are unmatched. I look forward to working with them again in the future.",
+    text: "Thanks to Bizedge, managing multiple outlets is no longer a challenge. The system’s multi-location support and detailed reports have given us a competitive edge in the market.",
   },
 ];
+
 
 export const features = [
   {
@@ -118,57 +119,61 @@ export const checklistItems = [
 
 export const pricingOptions = [
   {
-    title: "Free",
-    price: "$0",
+    title: "Starter",
+    price: "Ksh. 0",
     features: [
-      "Private board sharing",
-      "5 Gb Storage",
-      "Web Analytics",
-      "Private Mode",
+      "Basic Inventory Management",
+      "10 Product Entries",
+      "Standard Reporting",
+      "Community Support",
+      "Basic User Management"
     ],
   },
   {
     title: "Pro",
-    price: "$10",
+    price: "Ksh. 1000",
     features: [
-      "Private board sharing",
-      "10 Gb Storage",
-      "Web Analytics (Advance)",
-      "Private Mode",
+      "Advanced Inventory Management",
+      "Unlimited Product Entries",
+      "Customizable Reports",
+      "Email Support",
+      "Role-Based Access Control",
     ],
   },
   {
     title: "Enterprise",
-    price: "$200",
+    price: "Ksh. 5000",
     features: [
-      "Private board sharing",
+      "Full ERP Suite Access",
       "Unlimited Storage",
-      "High Performance Network",
-      "Private Mode",
+      "Advanced Analytics & Dashboards",
+      "Dedicated Account Manager",
+      "Priority 24/7 Support",
     ],
   },
 ];
 
+
 export const resourcesLinks = [
-  { href: "#", text: "Getting Started" },
-  { href: "#", text: "Documentation" },
-  { href: "#", text: "Tutorials" },
-  { href: "#", text: "API Reference" },
-  { href: "#", text: "Community Forums" },
+  { href: "tel:+1234567890", text: "Call Us: +254 756745002" },
+  { href: "mailto:support@bizedge.com", text: "Email Us: support@bizedge.com" },
+  { href: "https://bizedge.com/contact", text: "Contact Form" },
+  { href: "https://bizedge.com/faq", text: "FAQs" },
+  { href: "https://bizedge.com/live-chat", text: "Live Chat Support" },
 ];
 
 export const platformLinks = [
-  { href: "#", text: "Features" },
-  { href: "#", text: "Supported Devices" },
+  { href: "#", text: "ERP Features" },
+  { href: "#", text: "Supported Business Types" },
   { href: "#", text: "System Requirements" },
-  { href: "#", text: "Downloads" },
-  { href: "#", text: "Release Notes" },
+  { href: "#", text: "Download ERP Demo" },
+  { href: "#", text: "Version Updates" },
 ];
 
 export const communityLinks = [
-  { href: "#", text: "Events" },
-  { href: "#", text: "Meetups" },
-  { href: "#", text: "Conferences" },
-  { href: "#", text: "Hackathons" },
-  { href: "#", text: "Jobs" },
+  { href: "#", text: "User Feedback Forum" },
+  { href: "#", text: "BizEdge Webinars" },
+  { href: "#", text: "Industry Conferences" },
+  { href: "#", text: "Networking Events" },
+  { href: "#", text: "Career Opportunities" },
 ];
