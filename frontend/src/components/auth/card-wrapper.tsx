@@ -13,7 +13,7 @@ interface CardWrapperProps {
 const CardWrapper = ({ label, title, backButtonHref, backButtonLabel, children }: CardWrapperProps) => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <Card className="xl:w-1/4 sm:w-1/2 shadow-md bg-white border border-none">
+      <Card className="lg:w-1/4 sm:w-1/2 shadow-md bg-white border border-none">
         <CardHeader>
           <AuthHeader label={label} title={title} />
         </CardHeader>

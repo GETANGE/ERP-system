@@ -6,7 +6,6 @@ import CardWrapper from "./card-wrapper";
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -30,7 +29,7 @@ const LoginForm = () => {
 
   const onsubmit = (data:z.infer<typeof LoginSchema>) => {
     // send to the database
-    console.log('Submitted');
+    console.log('Submitted', data);
   }
 
   return (

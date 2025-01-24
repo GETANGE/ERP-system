@@ -6,7 +6,6 @@ import CardWrapper from "./card-wrapper";
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -23,6 +22,7 @@ import { useState } from "react";
 const RegisterForm = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  
   const form = useForm({
         resolver: zodResolver(RegisterSchema), defaultValues: {
           email:"",
@@ -35,7 +35,7 @@ const RegisterForm = () => {
   const onsubmit = (data:z.infer<typeof RegisterSchema>) => {
     // send to the database
     setLoading(true)
-    console.log('Submitted');
+    console.log('Submitted', data);
   }
 
   return (
