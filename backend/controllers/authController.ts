@@ -9,7 +9,7 @@ import AppError from "../utils/AppError";
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { userName, email, password, role, phoneNumber } = req.body;
+        const { username, email, password, role, phoneNumber } = req.body;
 
         const query = {
             // name: 'fetch-user',
@@ -28,7 +28,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 
         const insertQuery = {
             text: `INSERT INTO users(username, email, password, phoneNumber, role) VALUES($1, $2, $3, $4, $5) RETURNING *`,
-            values: [userName, email, hashedPassword, phoneNumber, role],
+            values: [username, email, hashedPassword, phoneNumber, role],
         };
 
         const insertResult = await client.query(insertQuery);

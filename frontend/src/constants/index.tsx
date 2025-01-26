@@ -1,11 +1,5 @@
 import { ShieldHalf, CalendarCheck, Database, DollarSign, Users, GlobeLock } from "lucide-react";
 
-import user1 from "../assets/profile-pictures/user1.jpg";
-import user2 from "../assets/profile-pictures/user2.jpg";
-import user3 from "../assets/profile-pictures/user3.jpg";
-import user4 from "../assets/profile-pictures/user4.jpg";
-import user5 from "../assets/profile-pictures/user5.jpg";
-import user6 from "../assets/profile-pictures/user6.jpg";
 
 export const navItems = [
   { label: "Features", href: "#" },
@@ -18,37 +12,37 @@ export const testimonials = [
   {
     user: "Alice Wanjiku",
     company: "Juja Mart Supplies",
-    image: user1,
+    image: "https://c1.wallpaperflare.com/preview/280/171/607/african-american-portrait-woman-female.jpg",
     text: "Bizedge ERP has completely transformed the way we manage our inventory and sales. The automation and reporting tools have saved us countless hours and improved our decision-making.",
   },
   {
     user: "Mark Otieno",
     company: "Nairobi Tech Solutions",
-    image: user2,
+    image: "https://nextluxury.com/wp-content/uploads/Drop-Fade-_jjdavis93.jpg",
     text: "Implementing Bizedge was the best decision for our growing business. The user-friendly interface and robust features make daily operations seamless and efficient.",
   },
   {
     user: "Grace Mwangi",
     company: "Kisumu Agro Dealers",
-    image: user3,
+    image: "https://i.pinimg.com/736x/93/0c/dc/930cdcc1b9672dc8f3e90294b72a88b8.jpg",
     text: "With Bizedge, we now have complete visibility over our supply chain. The analytics dashboard has been invaluable in tracking performance and identifying areas of improvement.",
   },
   {
     user: "Peter Kamau",
     company: "Mombasa Textiles",
-    image: user4,
+    image: 'https://d.ibtimes.co.uk/en/full/1495181/africans-richest-people.jpg',
     text: "The support team at Bizedge is incredible! They guided us through the implementation process, ensuring minimal downtime. We’ve seen tremendous improvements in productivity since day one.",
   },
   {
     user: "Lucy Nyawira",
     company: "Eldoret Fresh Produce",
-    image: user5,
+    image: "https://cdnb.artstation.com/p/assets/images/images/044/130/959/large/tomislav-drenjancevic-17-10-12.jpg?1639168487",
     text: "Bizedge ERP has streamlined our financial tracking and made compliance effortless. The integration features have also allowed us to connect with other tools we rely on daily.",
   },
   {
     user: "Daniel Njuguna",
     company: "Thika Home Essentials",
-    image: user6,
+    image: "https://i.pinimg.com/originals/7b/e8/8f/7be88f4f62679bf6d8c98e26060afbe0.jpg",
     text: "Thanks to Bizedge, managing multiple outlets is no longer a challenge. The system’s multi-location support and detailed reports have given us a competitive edge in the market.",
   },
 ];
