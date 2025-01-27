@@ -17,8 +17,12 @@ import { LoginSchema } from "@/schema";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { z } from "zod";
+import { useMutation } from "@tanstack/react-query";
+import { Login } from "@/api/api";
+import { useState } from "react";
 
 const LoginForm = () => {
+    const [loading, setLoading]= useState(false);
   const navigate = useNavigate();
   const form = useForm({
         resolver: zodResolver(LoginSchema), defaultValues: {
@@ -27,16 +31,27 @@ const LoginForm = () => {
         }
   })
 
+  // mutate
+  const mutation = useMutation({
+    mutationFn: Login,
+    onSuccess:(data)=>{
+        console.log(`LoggedIn successfully`, data);
+        setLoading(false);
+    }
+  })
+
   const onsubmit = (data:z.infer<typeof LoginSchema>) => {
     // send to the database
+    mutation.mutate(data)
     console.log('Submitted', data);
+    setLoading(true)
   }
 
   return (
     <CardWrapper
         label="Sign in here"
         title="Login"
-        backButtonHref={() => navigate('/login')}
+        backButtonHref={() => navigate('/register')}
         backButtonLabel="Don't have an account ?"
     >
         {/* contains all the elements to be displayed in the card{children} */}
@@ -70,7 +85,10 @@ const LoginForm = () => {
                       )}
                   />
               </div>
-              <Button className="w-full  bg-gradient-to-r from-orange-500 to-orange-800 py-2 px-3 rounded-md" type="submit">Login</Button>
+              <Button className="w-full  bg-gradient-to-r from-orange-500 to-orange-800 py-2 px-3 rounded-md" type="submit">{loading ? "Loading..." : "Login"}</Button>
+              <p className="text-black hover:cursor-pointer hover:underline" onClick={()=>{
+                navigate('/forgotpassword')
+              }}>Forgot password ?</p>
           </form>
         </Form>
     </CardWrapper>

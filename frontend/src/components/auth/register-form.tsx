@@ -18,24 +18,39 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { z } from "zod";
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { Register } from "@/api/api";
+
 
 const RegisterForm = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  
+
   const form = useForm({
         resolver: zodResolver(RegisterSchema), defaultValues: {
           email:"",
           username:"",
           password:"",
-          confirmPassword:""
+          confirmPassword:"",
+          phoneNumber:""
         }
   })
 
-  const onsubmit = (data:z.infer<typeof RegisterSchema>) => {
-    // send to the database
-    setLoading(true)
-    console.log('Submitted', data);
+  const mutation = useMutation({
+        mutationFn: Register,
+        onSuccess:(data)=>{
+            console.log(`Data submitted successfully,`, data)
+            setLoading(false);
+            navigate("/login")
+        },
+        onError: (error)=>{
+            console.log(`Error submitting data: ${error}`)
+        }
+  })
+
+  const onSubmit = (data: z.infer<typeof RegisterSchema>)=>{
+    setLoading(true);
+    mutation.mutate(data)
   }
 
   return (
@@ -47,7 +62,7 @@ const RegisterForm = () => {
     >
         {/* contains all the elements to be displayed in the card{children} */}
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onsubmit)} className="space-y-8 ">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 ">
               <div className="space-y-4">
                   <FormField 
                       control={form.control}
@@ -96,6 +111,19 @@ const RegisterForm = () => {
                               <FormLabel className="text-neutral-500 tracking-wide lg:text-xl">Confirm Password</FormLabel>
                               <FormControl>
                                   <Input {...field} type="password" placeholder="******" className="border border-none bg-slate-100 text-gray-950"/>
+                              </FormControl>
+                              <FormMessage/>
+                          </FormItem>
+                      )}
+                  />
+                <FormField 
+                      control={form.control}
+                      name='phoneNumber'
+                      render = {({field }) => (
+                          <FormItem>
+                              <FormLabel className="text-neutral-500 tracking-wide lg:text-xl">Phone Number</FormLabel>
+                              <FormControl>
+                                  <Input {...field} type="string" placeholder="+254 .. .. .. .." className="border border-none bg-slate-100 text-gray-950"/>
                               </FormControl>
                               <FormMessage/>
                           </FormItem>

@@ -9,41 +9,48 @@ import AppError from "../utils/AppError";
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { username, email, password, role, phoneNumber } = req.body;
+        const { username, email, password, phoneNumber, role = "customer" } = req.body; // Default role is "customer"
 
+        // Validate required fields
+        if (!username || !email || !password) {
+            return next(new AppError("Username, email, and password are required.", 400));
+        }
+
+        // Check if the user already exists
         const query = {
-            // name: 'fetch-user',
-            text: 'SELECT 2 FROM users WHERE email = $1',
+            text: 'SELECT 1 FROM users WHERE email = $1',
             values: [email],
         };
 
         const result = await client.query(query);
 
         if (result.rows.length > 0) {
-            return next ( new AppError("This user already exists", 403))
+            return next(new AppError("This user already exists", 403));
         }
 
-        // hash the password
-        const hashedPassword = await Bun.password.hash(password)
+        // Hash the password
+        const hashedPassword = await Bun.password.hash(password);
 
+        // Insert the user into the database
         const insertQuery = {
-            text: `INSERT INTO users(username, email, password, phoneNumber, role) VALUES($1, $2, $3, $4, $5) RETURNING *`,
+            text: `INSERT INTO users(username, email, password, phoneNumber, role) 
+                   VALUES($1, $2, $3, $4, $5) RETURNING *`,
             values: [username, email, hashedPassword, phoneNumber, role],
         };
 
         const insertResult = await client.query(insertQuery);
 
-        //assign jwt token
-        const token = jwt.sign({id:insertResult.rows[0].id}, process.env.JWT_SECRET!, { expiresIn: process.env.JWT_EXPIRES })
+        // Assign JWT token
+        const token = jwt.sign({ id: insertResult.rows[0].id }, process.env.JWT_SECRET!, { expiresIn: process.env.JWT_EXPIRES });
 
         res.status(201).json({
             status: "User created successfully",
-            token:token,
+            token,
             data: insertResult.rows[0],
         });
-    } catch (error:any) {
-        console.error(`Error creating user: ${error}`);
-        return next (new AppError("An error occurred while creating the user.", 500));
+    } catch (error: any) {
+        console.error(`Error creating user: ${error.message}`);
+        return next(new AppError("An error occurred while creating the user.", 500));
     }
 };
 

@@ -11,7 +11,7 @@ CREATE TABLE users (
     passwordResetExpiresAt DATE,
     hashedRandomToken TEXT,
     emailTokenExpiresAt DATE,
-    role VARCHAR(50) CHECK (role IN ('admin', 'employee', 'customer')) NOT NULL,
+    role VARCHAR(50) DEFAULT 'customer' CHECK (role IN ('admin', 'employee', 'customer')) NOT NULL, 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
