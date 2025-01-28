@@ -19,6 +19,11 @@ interface RegisterData {
 interface ForgotPassword{
     email: string
 }
+
+interface OTP {
+    pin:string,
+    password:string
+}
 export const Login = async function(data: LoginData){
     try {
         // send data to the database
@@ -67,6 +72,25 @@ export const forgotPassword = async function(data: ForgotPassword){
         if(axios.isAxiosError(error)){
             console.error(`Login error: ${error.response?.data?.message || error.message}`);
             throw new Error(error.response?.data?.message || 'Login failed, please try again.')
+        }else{
+            console.error(`Unexpected error occured: ${error}`);
+            throw new Error(`An expected error occured.Please try again.`);
+        }
+    }
+}
+
+// reset password via OTP
+export const resetPassword = async function (data:OTP) {
+    try {
+        const response = await axios.post(`${BASE_URL}/user/resetPassword`, data);
+        console.log(response.data)
+
+        return response.data;
+
+    } catch (error) {
+        if(axios.isAxiosError(error)){
+            console.error(`reset password error: ${error.response?.data?.message || error.message}`);
+            throw new Error(error.response?.data?.message || 'resetting password failed, please try again.')
         }else{
             console.error(`Unexpected error occured: ${error}`);
             throw new Error(`An expected error occured.Please try again.`);

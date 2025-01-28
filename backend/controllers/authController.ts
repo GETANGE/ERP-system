@@ -226,14 +226,14 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
 // Resetting password
 export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { resetToken, password } = req.body;
+        const { pin, password } = req.body;
 
-        if (!resetToken || !password) {
+        if (!pin || !password) {
             return next(new AppError("Reset token and password are required", 400));
         }
 
         // Hash the reset token
-        const passToken = crypto.createHash("sha256").update(resetToken.toString()).digest("hex");
+        const passToken = crypto.createHash("sha256").update(pin.toString()).digest("hex");
 
         // Fetch the user with the reset token
         const fetchUserQuery = {

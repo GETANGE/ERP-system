@@ -16,9 +16,12 @@ import { Button } from "../ui/button"
 import { useState } from "react"
 import { useMutation } from "@tanstack/react-query"
 import { forgotPassword } from "@/api/api"
+import { useNavigate } from "react-router"
+import { Mail } from "lucide-react"
 
 const ForgotPassword = () => {
     const [loading, setLoading]= useState(false);
+    const navigate = useNavigate();
 
     const form = useForm({
         resolver:zodResolver(ForgotPasswordSchema), defaultValues: {
@@ -36,6 +39,7 @@ const ForgotPassword = () => {
         console.log(data);
         mutation.mutate(data)
         setLoading(true)
+        navigate('/otp')
     }
     
   return (
@@ -51,7 +55,10 @@ const ForgotPassword = () => {
                       name='email'
                       render = {({field }) => (
                           <FormItem>
-                              <FormLabel className="text-neutral-500 tracking-wide lg:text-xl">Email</FormLabel>
+                                <FormLabel className="text-neutral-500 tracking-wide lg:text-xl flex items-center gap-2">
+                                    <Mail className="h-5 w-5 text-gray-700" />
+                                        Email
+                                </FormLabel>
                               <FormControl>
                                   <Input {...field} type="email" placeholder="johndoe@gmail.com" className="border border-none bg-slate-100 text-gray-950"/>
                               </FormControl>
