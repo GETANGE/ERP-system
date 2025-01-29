@@ -11,25 +11,18 @@ CREATE TABLE users (
     passwordResetExpiresAt DATE,
     hashedRandomToken TEXT,
     emailTokenExpiresAt DATE,
-    role VARCHAR(50) DEFAULT 'customer' CHECK (role IN ('admin', 'employee', 'customer')) NOT NULL, 
+    role VARCHAR(50) DEFAULT 'customer' CHECK (role IN ('admin', 'employee', 'customer', 'supplier')) NOT NULL, 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Inventory Management
-CREATE TABLE suppliers (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(150) NOT NULL,
-    contact_info TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
 CREATE TABLE inventory (
     id SERIAL PRIMARY KEY,
     product_name VARCHAR(150) NOT NULL,
     description TEXT,
     stock_level INTEGER NOT NULL DEFAULT 0,
-    supplier_id INT REFERENCES suppliers(id) ON DELETE SET NULL,
+    supplier_id INT REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
