@@ -1,13 +1,18 @@
 import express from 'express';
 
-import { createInventory, getAllInventory, updateInventory } from '../controllers/inventoryController';
+import { createInventory, deleteInventory, getAllInventory, getSingleInventory, updateInventory } from '../controllers/inventoryController';
+import { protect } from '../controllers/authController';
 
 const router = express.Router();
 
 router
     .route('/')
-        .get(getAllInventory)
-        .post(createInventory)
+        .get(protect,getAllInventory)
+        .post(protect,createInventory)
 
-router.route("/:id").patch(updateInventory)
+router
+    .route("/:id")
+        .patch(protect,updateInventory)
+        .delete(protect,deleteInventory)
+        .get(protect,getSingleInventory)
 export default router;

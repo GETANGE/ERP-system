@@ -9,6 +9,7 @@ const port = 4004;
 
 import userRoute from "./routes/userRoute";
 import AppError from "./utils/AppError";
+import inventoryRoute from "./routes/inventoryRoute";
 
 app.use(morgan('dev'));
 
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/v1/user", userRoute);
+app.use("/api/v1/inventory", inventoryRoute)
 
 app.get("/", (req:Request,res:Response)=>{
     res.status(200).json({
