@@ -1,6 +1,12 @@
 name: backend-workflow
 
-on: [push, workflow_dispatch]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, closed]
+  workflow_dispatch:
 
 jobs:
   setup:

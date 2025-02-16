@@ -72,7 +72,7 @@ export const loginUser = async (req:Request, res:Response, next:NextFunction) =>
 
         const result = await client.query(query);
 
-        if(!result) {
+        if(!result.rows[0]) {
             return next( new AppError("This user does not exists", 403))
         }
 
