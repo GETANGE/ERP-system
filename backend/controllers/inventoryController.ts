@@ -148,7 +148,7 @@ export const deleteInventory = async (req: Request, res: Response, next: NextFun
     }
 
     const token = authHeaders.split(" ")[1];
-    const decodeToken = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+    const decodeToken = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
 
     // Get the supplier's ID from the inventory record
     const supplier = inventory.rows[0];

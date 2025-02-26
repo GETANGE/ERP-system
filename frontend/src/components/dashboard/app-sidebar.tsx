@@ -1,15 +1,11 @@
-import { Home, Inbox, FileText, Settings, Wallet, LogOutIcon } from "lucide-react"
+import { ShoppingCart, Layers, Truck, CreditCard, Package, BarChart2, LayoutDashboard, Archive, Settings, LifeBuoy, LogOut } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
   SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarFooter,
 } from "@/components/ui/sidebar"
+import { SidebarSection } from "./sideBar-section";
 
 // Sample user profile data 
 const user = {
@@ -20,35 +16,38 @@ const user = {
 
 // Menu items.
 const items = [
-  { title: "Home", url: "#", icon: Home },
-  { title: "Inventory", url: "#", icon: Inbox },
-  { title: "Invoices", url: "#", icon: FileText },
-  { title: "Expenses", url: "#", icon: Wallet },
-  { title: "Settings", url: "#", icon: Settings },
-]
+  { title: "Orders", url: "#", icon: ShoppingCart }, 
+  { title: "Category", url: "#", icon: Layers }, 
+  { title: "Suppliers", url: "#", icon: Truck }, 
+  { title: "Billing", url: "#", icon: CreditCard }, 
+  { title: "Delivery", url: "#", icon: Package },
+  { title: "Reports", url: "#", icon: BarChart2 }, 
+];
+
+
+// Menu discover
+const item_1 = [
+  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard }, 
+  { title: "Inventory", url: "#", icon: Archive },
+];
+
+
+// Menu settings
+const setting = [
+  { title: "Settings", url: "#", icon: Settings }, 
+  { title: "Help", url: "#", icon: LifeBuoy }, 
+  { title: "Logout", url: "#", icon: LogOut }, 
+];
 
 export function AppSidebar() {
   return (
-    <div className="bg-gray-100 text-black h-screen flex flex-col">
+    <div className="bg-black h-screen flex flex-col">
       <Sidebar className="flex flex-col h-full">
         <SidebarContent className="flex-grow">
-          <SidebarGroup>
-            <SidebarGroupLabel className="text-xl mt-5">Application</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu className="p-4">
-                {items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild className="mb-5 flex items-center space-x-3">
-                      <a href={item.url} className="flex items-center space-x-2">
-                        <item.icon className="w-5 h-5 text-gray-700" />
-                        <span className="text-sm">{item.title}</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+        <SidebarGroupLabel className="text-xl mt-5">BizEdge</SidebarGroupLabel>
+          <SidebarSection title="DISCOVER" items={item_1}/>
+          <SidebarSection title="INVENTORY" items={items}/>
+          <SidebarSection title="SETTINGS" items={setting}/>
         </SidebarContent>
 
         {/* Sidebar Footer - User Profile */}
@@ -60,7 +59,6 @@ export function AppSidebar() {
                     <p className="text-xs text-gray-500">{user.email}</p>
                 </div>
             </div>
-          <LogOutIcon className="w-5 h-5 text-gray-500 ml-auto" />
         </SidebarFooter>
       </Sidebar>
     </div>
