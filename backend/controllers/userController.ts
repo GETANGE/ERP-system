@@ -1,5 +1,6 @@
 import { type NextFunction ,type Response ,type Request, text} from "express";
 import client from "../middlwares/database";
+import AppError from "../utils/AppError";
 
 export const getAllUsers = async (req:Request, res:Response, next:NextFunction ) =>{
     try {
@@ -12,12 +13,7 @@ export const getAllUsers = async (req:Request, res:Response, next:NextFunction )
         // if no users return 
 
         if (result.rows[0].length === 0){
-            return next(
-                res.status(403).json({
-                    status:"fail",
-                    message: "No users"
-                })
-            )
+            return next(new AppError("No users found", 403))
         }
         // get resppnse from the server
         res.status(200).json({
@@ -25,11 +21,6 @@ export const getAllUsers = async (req:Request, res:Response, next:NextFunction )
             data:result.rows
         })
     } catch (error) {
-        return next(
-            res.status(500).json({
-                status:"fail",
-                message : "error getting users..."
-            })
-        )
+        return next( new AppError(`error getting users...`, 500))
     }
 }

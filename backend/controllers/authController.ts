@@ -76,6 +76,11 @@ export const loginUser = async (req:Request, res:Response, next:NextFunction) =>
             return next( new AppError("This user does not exists", 403))
         }
 
+        //check if the user is active
+        if(result.rows[0].active !== true ){
+            return next(new AppError("Your deactivated your account.Please contact customer support.", 402))
+        }
+
         //check if passwords match
         const isMatch = await Bun.password.verify(password, result.rows[0].password);
 

@@ -4,9 +4,9 @@ import { Outlet } from "react-router-dom"
 
 export default function Sidebar({ children }: { children: React.ReactNode }) {
   return (
-    <SidebarProvider className="bg-gray-200">
+    <SidebarProvider className="bg-gray-200 w-full h-screen">
       <AppSidebar />
-      <main>
+      <main className="w-full h-screen">
         <SidebarTrigger />
         <Outlet/>
         {children}
