@@ -1,22 +1,21 @@
 import express, { type NextFunction, type Request, type Response } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
+import dotenv from "dotenv";
 import cors from "cors";
-import os from "os";
-import { spawn } from "bun";
+import { databaseConnect, databaseDisconnect } from "./middlwares/database";
 
 import userRoute from "./routes/userRoute";
 import inventoryRoute from "./routes/inventoryRoute";
 import inventMovementRoute from "./routes/inventMovementRoute";
 import AppError from "./utils/AppError";
-import { databaseConnect, databaseDisconnect } from "./middlwares/database";
 
-const numCores = os.cpus().length;
-const BASE_PORT = 4004;
+dotenv.config();
 
-async function startServer(port: number) {
+const PORT = process.env.PORT || 4004;
+
+async function startServer() {
     await databaseConnect();
-
     const app = express();
 
     app.use(morgan("dev"));
@@ -34,7 +33,7 @@ async function startServer(port: number) {
             message: "Welcome to my revised ERP system",
             env: "Bun runtime",
             version: "1.0.0",
-            handledBy: `Process ${process.pid} on port ${port}`,
+            handledBy: `Process ${process.pid} on port ${PORT}`,
         });
     });
 
@@ -60,26 +59,12 @@ async function startServer(port: number) {
         });
     });
 
-    app.listen(port, () => {
-        console.log(`Server listening on port ${port} - Process ID: ${process.pid}`);
+    app.listen(PORT, () => {
+        console.log(`Server listening on port ${PORT} - Process ID: ${process.pid}`);
     });
 }
 
-// Clustering logic
-if (process.env.INSTANCE_ID) {
-    const port = BASE_PORT + parseInt(process.env.INSTANCE_ID);
-    startServer(port).catch(async (error) => {
-        console.error(`Error starting server: ${error}`);
-        await databaseDisconnect();
-    });
-} else {
-    console.log(`Starting ${numCores} Bun instances...`);
-
-    for (let i = 0; i < numCores; i++) {
-        spawn([process.execPath, "run", "--watch", "App.ts"], {
-            stdout: "inherit",
-            stderr: "inherit",
-            env: { INSTANCE_ID: i.toString() }, // Assign instance ID dynamically
-        });
-    }
-} 
+startServer().catch(async (error) => {
+    console.error(`Error starting server: ${error}`);
+    await databaseDisconnect();
+});
